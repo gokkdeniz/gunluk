@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bir Şans Daha Ver</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* Genel Sıfırlama ve Temel Ayarlar */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body, html {
+      width: 100vw;
+      height: 100vh;
+      overflow-x: hidden;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #ffb6b9, #fae3d9, #bbded6, #8ac6d1);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      position: relative;
+      min-height: 100vh;
+    }
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    /* Animasyonlu Kalpler */
+    .hearts {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none; z-index: 1;
+    }
+    .heart {
+      position: absolute;
+      width: 30px; height: 30px;
+      background: rgba(255, 105, 180, 0.7);
+      left: 50%; top: 100%;
+      transform: translateX(-50%) scale(1);
+      animation: floatHeart 8s linear infinite;
+      opacity: 0.8;
+      pointer-events: none;
+    }
+    .heart:before, .heart:after {
+      content: "";
+      position: absolute;
+      width: 30px; height: 30px;
+      background: inherit;
+      border-radius: 50%;
+    }
+    .heart:before { left: -15px; }
+    .heart:after { top: -15px; }
+    @keyframes floatHeart {
+      0% {
+        top: 100%;
+        opacity: 0.8;
+        transform: translateX(-50%) scale(1) rotate(0deg);
+      }
+      80% {
+        opacity: 0.8;
+      }
+      100% {
+        top: -10%;
+        opacity: 0;
+        transform: translateX(-50%) scale(1.3) rotate(30deg);
+      }
+    }
+
+    /* Giriş Ekranı */
+    #login {
+      position: fixed;
+      z-index: 10;
+      width: 100vw; height: 100vh;
+      background: rgba(255,255,255,0.85);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity 0.5s;
+    }
+    #login input[type="password"] {
+      padding: 12px 20px;
+      border: 2px solid #ff6f91;
+      border-radius: 25px;
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      outline: none;
+      transition: border 0.3s;
+    }
+    #login input[type="password"]:focus {
+      border: 2px solid #ffb6b9;
+    }
+    #login button {
+      padding: 10px 30px;
+      background: linear-gradient(90deg, #ff6f91, #ffb6b9);
+      border: none;
+      border-radius: 25px;
+      color: white;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #login button:hover {
+      background: linear-gradient(90deg, #ffb6b9, #ff6f91);
+    }
+    #login .error {
+      color: #ff1744;
+      margin-top: 10px;
+      font-size: 1rem;
+    }
+
+    /* Ana İçerik */
+    .container {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px 20px 20px;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    /* Typewriter Başlık */
+    .typewriter {
+      font-family: 'Pacifico', cursive;
+      font-size: 2.5rem;
+      color: #ff6f91;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+      min-height: 60px;
+      white-space: pre;
+      border-right: 2px solid #ff6f91;
+      overflow: hidden;
+      display: inline-block;
+      animation: blink-caret 0.7s step-end infinite;
+    }
+    @keyframes blink-caret {
+      0%, 100% { border-color: #ff6f91; }
+      50% { border-color: transparent; }
+    }
+
+    /* Romantik Paragraf */
+    .romantic-text {
+      font-size: 1.2rem;
+      color: #333;
+      margin-bottom: 30px;
+      background: rgba(255,255,255,0.7);
+      padding: 15px 25px;
+      border-radius: 20px;
+      display: inline-block;
+      box-shadow: 0 2px 8px rgba(255,182,185,0.15);
+    }
+
+    /* Slider */
+    .slider {
+      margin: 30px 0 40px 0;
+      font-size: 1.3rem;
+      color: #ff6f91;
+      font-style: italic;
+      min-height: 40px;
+      background: rgba(255,255,255,0.5);
+      padding: 10px 20px;
+      border-radius: 15px;
+      box-shadow: 0 2px 8px rgba(255,182,185,0.10);
+      display: inline-block;
+    }
+
+    /* Galeri */
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    .gallery img {
+      width: 140px;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 18px;
+      box-shadow: 0 4px 16px rgba(255,182,185,0.18);
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+      background: #fff;
+    }
+    .gallery img:hover {
+      transform: scale(1.08);
+      box-shadow: 0 8px 32px rgba(255,182,185,0.28);
+      z-index: 2;
+    }
+
+    /* Günlük Bölümü */
+    .diary-section {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto 30px auto;
+      background: rgba(255,255,255,0.7);
+      border-radius: 18px;
+      box-shadow: 0 2px 8px rgba(255,182,185,0.13);
+      padding: 22px 18px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .diary-section h3 {
+      color: #ff6f91;
+      font-family: 'Pacifico', cursive;
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    #diary {
+      width: 100%;
+      min-height: 120px;
+      max-width: 100%;
+      border-radius: 12px;
+      border: 2px solid #ffb6b9;
+      padding: 12px 14px;
+      font-size: 1.1rem;
+      font-family: 'Roboto', sans-serif;
+      resize: vertical;
+      margin-bottom: 8px;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(255,182,185,0.08);
+      transition: border 0.3s;
+    }
+    #diary:focus {
+      border: 2px solid #ff6f91;
+      outline: none;
+    }
+    .diary-info {
+      font-size: 0.95rem;
+      color: #888;
+      margin-top: 2px;
+    }
+    .diary-inputs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      width: 100%;
+      justify-content: center;
+    }
+    .diary-inputs input[type="date"], .diary-inputs input[type="time"] {
+      padding: 7px 10px;
+      border: 1.5px solid #ffb6b9;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: 'Roboto', sans-serif;
+      background: #fff;
+      transition: border 0.3s;
+    }
+    .diary-inputs input:focus {
+      border: 1.5px solid #ff6f91;
+      outline: none;
+    }
+    #save-diary {
+      padding: 8px 24px;
+      background: linear-gradient(90deg, #ff6f91, #ffb6b9);
+      border: none;
+      border-radius: 18px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-bottom: 8px;
+      margin-top: 4px;
+      transition: background 0.3s;
+    }
+    #save-diary:hover {
+      background: linear-gradient(90deg, #ffb6b9, #ff6f91);
+    }
+    #diary-list {
+      width: 100%;
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+    .diary-card {
+      width: 100%;
+      max-width: 500px;
+      background: rgba(255,255,255,0.85);
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(255,182,185,0.13);
+      padding: 14px 16px 10px 16px;
+      cursor: pointer;
+      transition: box-shadow 0.2s, background 0.2s;
+      position: relative;
+      border-left: 5px solid #ffb6b9;
+      overflow: hidden;
+    }
+    .diary-card:hover {
+      box-shadow: 0 4px 16px rgba(255,182,185,0.22);
+      background: #fff;
+    }
+    .diary-card-date {
+      font-size: 0.98rem;
+      color: #ff6f91;
+      margin-bottom: 4px;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 500;
+    }
+    .diary-card-content {
+      font-size: 1.08rem;
+      color: #333;
+      white-space: pre-line;
+      word-break: break-word;
+      transition: max-height 0.3s;
+    }
+    .diary-card-collapsed {
+      max-height: 2.7em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      position: relative;
+    }
+    .diary-card-collapsed:after {
+      content: '... Devamı';
+      color: #ff6f91;
+      position: absolute;
+      right: 0; bottom: 0;
+      background: linear-gradient(to right, rgba(255,255,255,0), #fff 80%);
+      padding-left: 10px;
+      font-size: 0.95em;
+      cursor: pointer;
+    }
+
+    /* Mobil Uyumluluk */
+    @media (max-width: 600px) {
+      .container { padding: 20px 5px; }
+      .typewriter { font-size: 1.4rem; min-height: 40px; }
+      .gallery img { width: 90px; height: 90px; }
+      .romantic-text { font-size: 1rem; padding: 10px 10px; }
+      .slider { font-size: 1rem; padding: 7px 10px; }
+      .diary-section { padding: 10px 5px 10px 5px; }
+      #diary { font-size: 1rem; min-height: 80px; }
+      .diary-card { padding: 10px 7px 8px 10px; }
+      .diary-inputs { flex-direction: column; gap: 5px; align-items: stretch; }
+    }
+    /* Modal */
+    .modal-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.25);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px 24px 18px 24px;
+      box-shadow: 0 4px 24px rgba(255,182,185,0.18);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 260px;
+      max-width: 90vw;
+    }
+    .modal-content h4 {
+      color: #ff6f91;
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+    }
+    .modal-content input[type="password"] {
+      padding: 10px 18px;
+      border: 2px solid #ffb6b9;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      outline: none;
+      width: 100%;
+      transition: border 0.3s;
+    }
+    .modal-content button {
+      padding: 7px 18px;
+      background: linear-gradient(90deg, #ff6f91, #ffb6b9);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 0 5px 8px 5px;
+      transition: background 0.3s;
+    }
+    .modal-content button:hover {
+      background: linear-gradient(90deg, #ffb6b9, #ff6f91);
+    }
+    .modal-error {
+      color: #ff1744;
+      font-size: 0.98rem;
+      margin-top: 2px;
+      min-height: 18px;
+    }
+    .diary-card-btns {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+      justify-content: flex-end;
+    }
+    .diary-card-btns button {
+      padding: 4px 12px;
+      background: linear-gradient(90deg, #ffb6b9, #ff6f91);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .diary-card-btns button:hover {
+      background: linear-gradient(90deg, #ff6f91, #ffb6b9);
+    }
+  </style>
+</head>
+<body>
+  <!-- Animasyonlu Kalpler -->
+  <div class="hearts" id="hearts"></div>
+
+  <!-- Giriş Ekranı -->
+  <div id="login">
+    <h2>Hoş Geldin! 💖</h2>
+    <p>Lütfen şifreyi gir:</p>
+    <input type="password" id="password" placeholder="Şifre">
+    <button onclick="checkPassword()">Giriş</button>
+    <div class="error" id="error"></div>
+  </div>
+
+  <!-- Ana İçerik -->
+  <div class="container" id="main" style="display:none;">
+    <!-- Typewriter Başlık -->
+    <div class="typewriter" id="typewriter"></div>
+    <!-- Romantik Paragraf -->
+    <div class="romantic-text">
+      Kalbimde hep sen vardın, her anımda, her nefesimde... Birlikte nice güzel anılar biriktirmek dileğiyle, bir şans daha...
+    </div>
+    <!-- Slider -->
+    <div class="slider" id="slider"></div>
+    <!-- Galeri -->
+    <div class="gallery">
+      <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80" alt="Galeri 1">
+      <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" alt="Galeri 2">
+      <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80" alt="Galeri 3">
+      <img src="https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=400&q=80" alt="Galeri 4">
+      <img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=400&q=80" alt="Galeri 5">
+      <img src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80" alt="Galeri 6">
+    </div>
+    <!-- Günlük Bölümü Başlangıcı -->
+    <div class="diary-section">
+      <h3>Günlük</h3>
+      <button id="show-diary-form">Günlük Ekle</button>
+      <form id="diary-form" style="display:none; width:100%; flex-direction:column; align-items:center;">
+        <div class="diary-inputs">
+          <input type="date" id="diary-date">
+          <input type="time" id="diary-time">
+        </div>
+        <textarea id="diary" placeholder="Duygularını, düşüncelerini buraya yazabilirsin..." rows="5"></textarea>
+        <button type="button" id="save-diary">Kaydet</button>
+      </form>
+      <div class="diary-info">Günlüklerin aşağıda listelenir ve otomatik kaydedilir 💌</div>
+      <div id="diary-list"></div>
+    </div>
+    <!-- Şifre Modalı -->
+    <div id="diary-password-modal" class="modal-bg" style="display:none;">
+      <div class="modal-content">
+        <h4>Şifre Gerekli</h4>
+        <input type="password" id="diary-password-input" placeholder="Şifre">
+        <button id="diary-password-ok">Tamam</button>
+        <button id="diary-password-cancel">İptal</button>
+        <div class="modal-error" id="diary-password-error"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Şarkı (mp3 dosyanızı buraya ekleyin) -->
+  <audio id="bg-music" src="https://cdn.pixabay.com/audio/2023/03/13/audio_126bfae5b2.mp3" loop></audio>
+  <!-- Not: Telifli şarkılar için kendi mp3 dosyanızı kullanmalısınız. -->
+
+  <script>
+    // Şifre kontrolü
+    const correctPassword = "23112024"; // Şifrenizi buraya yazın
+    function checkPassword() {
+      const input = document.getElementById('password').value;
+      if (input === correctPassword) {
+        document.getElementById('login').style.opacity = 0;
+        setTimeout(() => {
+          document.getElementById('login').style.display = 'none';
+          document.getElementById('main').style.display = 'flex';
+          startTypewriter();
+          document.getElementById('bg-music').play();
+        }, 500);
+      } else {
+        document.getElementById('error').textContent = "Şifre yanlış, tekrar dene!";
+      }
+    }
+    // Enter tuşu ile giriş
+    document.getElementById('password').addEventListener('keydown', function(e){
+      if(e.key === 'Enter') checkPassword();
+    });
+
+    // Typewriter Efekti
+    const titleText = "Bir Şans Daha Ver";
+    let twIndex = 0;
+    function startTypewriter() {
+      twIndex = 0;
+      document.getElementById('typewriter').textContent = "";
+      typeWriterStep();
+    }
+    function typeWriterStep() {
+      if (twIndex < titleText.length) {
+        document.getElementById('typewriter').textContent += titleText.charAt(twIndex);
+        twIndex++;
+        setTimeout(typeWriterStep, 120);
+      }
+    }
+
+    // Slider - Romantik Cümleler
+    const sliderTexts = [
+      "Sana her baktığımda kalbim yeniden atıyor.",
+      "Birlikte her şey daha güzel.",
+      "Seninle geçen her an bir mucize.",
+      "Gözlerin, en karanlık gecemi aydınlatıyor.",
+      "Sana olan sevgim her geçen gün büyüyor.",
+      "Bir şans daha, sonsuz mutluluk demek."
+    ];
+    let sliderIndex = 0;
+    function startSlider() {
+      document.getElementById('slider').textContent = sliderTexts[sliderIndex];
+      sliderIndex = (sliderIndex + 1) % sliderTexts.length;
+      setTimeout(startSlider, 3000);
+    }
+    // Slider başlat
+    startSlider();
+
+    // Animasyonlu Kalpler
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      // Rastgele konum ve boyut
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDuration = (6 + Math.random() * 4) + 's';
+      heart.style.opacity = 0.6 + Math.random() * 0.4;
+      document.getElementById('hearts').appendChild(heart);
+      setTimeout(() => heart.remove(), 9000);
+    }
+    setInterval(createHeart, 600);
+
+    // Mobilde müzik otomatik başlamayabilir, kullanıcı etkileşimi gerekebilir.
+    // Girişten sonra play() çağrısı ile başlatılıyor.
+
+    // Açıklama: Fotoğrafları kendi görsellerinizle değiştirin, şifreyi dilediğiniz gibi ayarlayın.
+
+    // --- Günlük Şifre Koruma ve Oturum Yönetimi ---
+    const diaryPassword = "seniseviyorum"; // Günlük işlemleri için şifre
+    let diarySession = false; // Oturum açık mı?
+    let diaryPasswordCallback = null;
+    function showDiaryPasswordModal(callback) {
+      document.getElementById('diary-password-modal').style.display = 'flex';
+      document.getElementById('diary-password-input').value = '';
+      document.getElementById('diary-password-error').textContent = '';
+      diaryPasswordCallback = callback;
+    }
+    function hideDiaryPasswordModal() {
+      document.getElementById('diary-password-modal').style.display = 'none';
+      diaryPasswordCallback = null;
+    }
+    document.getElementById('diary-password-ok').onclick = function() {
+      const val = document.getElementById('diary-password-input').value;
+      if (val === diaryPassword) {
+        diarySession = true;
+        hideDiaryPasswordModal();
+        if (diaryPasswordCallback) diaryPasswordCallback(true);
+      } else {
+        document.getElementById('diary-password-error').textContent = 'Şifre yanlış!';
+        if (diaryPasswordCallback) diaryPasswordCallback(false);
+      }
+    };
+    document.getElementById('diary-password-cancel').onclick = function() {
+      hideDiaryPasswordModal();
+      if (diaryPasswordCallback) diaryPasswordCallback(false);
+    };
+    // Günlük Ekle butonu
+    document.getElementById('show-diary-form').onclick = function() {
+      if (diarySession) {
+        document.getElementById('diary-form').style.display = 'flex';
+        this.style.display = 'none';
+      } else {
+        showDiaryPasswordModal((ok) => {
+          if (ok) {
+            document.getElementById('diary-form').style.display = 'flex';
+            document.getElementById('show-diary-form').style.display = 'none';
+          }
+        });
+      }
+    };
+    // --- Günlük CRUD ---
+    function getDiaries() {
+      return JSON.parse(localStorage.getItem('myDiaries') || '[]');
+    }
+    function saveDiaries(diaries) {
+      localStorage.setItem('myDiaries', JSON.stringify(diaries));
+    }
+    function renderDiaries() {
+      const diaryList = document.getElementById('diary-list');
+      diaryList.innerHTML = '';
+      const diaries = getDiaries();
+      diaries.slice().reverse().forEach((entry, idx) => {
+        const realIdx = diaries.length - 1 - idx;
+        const card = document.createElement('div');
+        card.className = 'diary-card';
+        // Tarih ve saat gösterimi
+        const dateDiv = document.createElement('div');
+        dateDiv.className = 'diary-card-date';
+        dateDiv.textContent = `${entry.date} ${entry.time ? entry.time : ''} tarihinde yazıldı`;
+        card.appendChild(dateDiv);
+        // İçerik
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'diary-card-content';
+        let collapsed = true;
+        function updateContent() {
+          if (collapsed && entry.text.length > 80) {
+            contentDiv.textContent = entry.text.slice(0, 80);
+            contentDiv.classList.add('diary-card-collapsed');
+          } else {
+            contentDiv.textContent = entry.text;
+            contentDiv.classList.remove('diary-card-collapsed');
+          }
+        }
+        updateContent();
+        card.appendChild(contentDiv);
+        card.addEventListener('click', function(e) {
+          if (e.target !== card) return;
+          collapsed = !collapsed;
+          updateContent();
+        });
+        // Düzenle ve Sil butonları
+        const btns = document.createElement('div');
+        btns.className = 'diary-card-btns';
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Düzenle';
+        editBtn.onclick = function(ev) {
+          ev.stopPropagation();
+          if (diarySession) {
+            editDiary(realIdx, entry);
+          } else {
+            showDiaryPasswordModal((ok) => { if (ok) editDiary(realIdx, entry); });
+          }
+        };
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Sil';
+        delBtn.onclick = function(ev) {
+          ev.stopPropagation();
+          if (diarySession) {
+            deleteDiary(realIdx);
+          } else {
+            showDiaryPasswordModal((ok) => { if (ok) deleteDiary(realIdx); });
+          }
+        };
+        btns.appendChild(editBtn);
+        btns.appendChild(delBtn);
+        card.appendChild(btns);
+        diaryList.appendChild(card);
+      });
+    }
+    // Kaydet butonu işlevi
+    document.getElementById('save-diary').onclick = function() {
+      const text = document.getElementById('diary').value.trim();
+      const date = document.getElementById('diary-date').value;
+      const time = document.getElementById('diary-time').value;
+      if (!text) return alert('Lütfen bir şeyler yaz!');
+      if (!date) return alert('Lütfen tarih seç!');
+      const diaries = getDiaries();
+      if (this.dataset.editing) {
+        // Düzenleme modunda
+        const idx = parseInt(this.dataset.editing);
+        diaries[idx] = { text, date, time };
+        this.dataset.editing = '';
+        document.getElementById('save-diary').textContent = 'Kaydet';
+      } else {
+        diaries.push({ text, date, time });
+      }
+      saveDiaries(diaries);
+      document.getElementById('diary').value = '';
+      document.getElementById('diary-form').style.display = 'none';
+      document.getElementById('show-diary-form').style.display = 'inline-block';
+      renderDiaries();
+    };
+    // Düzenle fonksiyonu
+    function editDiary(idx, entry) {
+      document.getElementById('diary-form').style.display = 'flex';
+      document.getElementById('show-diary-form').style.display = 'none';
+      document.getElementById('diary').value = entry.text;
+      document.getElementById('diary-date').value = entry.date;
+      document.getElementById('diary-time').value = entry.time;
+      document.getElementById('save-diary').dataset.editing = idx;
+      document.getElementById('save-diary').textContent = 'Günlüğü Güncelle';
+    }
+    // Sil fonksiyonu
+    function deleteDiary(idx) {
+      if (!confirm('Bu günlüğü silmek istediğine emin misin?')) return;
+      const diaries = getDiaries();
+      diaries.splice(idx, 1);
+      saveDiaries(diaries);
+      renderDiaries();
+    }
+    // Sayfa açıldığında günlükleri yükle
+    renderDiaries();
+    // Tarih ve saat alanlarını bugünün tarihi/saatine ayarla
+    const dateInput = document.getElementById('diary-date');
+    const timeInput = document.getElementById('diary-time');
+    if (dateInput) {
+      const now = new Date();
+      dateInput.value = now.toISOString().slice(0,10);
+      if (timeInput) {
+        timeInput.value = now.toTimeString().slice(0,5);
+      }
+    }
+  </script>
+</body>
+</html>
